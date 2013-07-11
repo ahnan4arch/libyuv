@@ -18,7 +18,9 @@
 #define HAVE_SETJMP
 #endif
 struct FILE;  // For jpeglib.h.
+extern "C" {
 #include <jpeglib.h>
+}
 
 #include "libyuv/planar_functions.h"  // For CopyPlane().
 

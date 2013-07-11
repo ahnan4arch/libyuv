@@ -64,6 +64,59 @@ void ScaleRowDown2Box_NEON(const uint8* src_ptr, ptrdiff_t src_stride,
   : "q0", "q1", "q2", "q3"     // Clobber List
   );
 }
+  
+void ScaleRowDown2Int_NEON(const uint8* src_ptr, int src_stride,
+                           uint8* dst, int dst_width) {
+  asm volatile (
+    "add        %1, %0                         \n"  // change the stride to row 2 pointer
+  "1:                                          \n"
+    "vld1.u8    {q0,q1}, [%0]!                 \n"  // load row 1 and post increment
+    "vld1.u8    {q2,q3}, [%1]!                 \n"  // load row 2 and post increment
+    "vpaddl.u8  q0, q0                         \n"  // row 1 add adjacent
+    "vpaddl.u8  q1, q1                         \n"
+    "vpadal.u8  q0, q2                         \n"  // row 2 add adjacent, add row 1 to row 2
+    "vpadal.u8  q1, q3                         \n"
+    "vrshrn.u16 d0, q0, #2                     \n"  // downshift, round and pack
+    "vrshrn.u16 d1, q1, #2                     \n"
+    "vst1.u8    {q0}, [%2]!                    \n"
+    "subs       %3, %3, #16                    \n"  // 16 processed per loop
+    "bgt        1b                             \n"
+  : "+r"(src_ptr),          // %0
+    "+r"(src_stride),       // %1
+    "+r"(dst),              // %2
+    "+r"(dst_width)         // %3
+  :
+  : "q0", "q1", "q2", "q3"     // Clobber List
+  );
+}
+
+void ScaleRowDown2IntAndDeinterleave_NEON(const uint8* src_ptr, int src_stride,
+                                          uint8* dstU, uint8* dstV, int dst_width)
+{
+  asm volatile (
+    "add        %1, %0, %1, lsl #1             \n"  // change the stride to row 2 pointer
+  "1:                                          \n"
+    "vld2.u8    {q0,q1}, [%0]!                 \n"  // load row 1 and post increment
+    "vld2.u8    {q2,q3}, [%1]!                 \n"  // load row 2 and post increment
+    "vpaddl.u8  q0, q0                         \n"  // row 1 add adjacent
+    "vpaddl.u8  q1, q1                         \n"
+    "vpadal.u8  q0, q2                         \n"  // row 2 add adjacent, add row 1 to row 2
+    "vpadal.u8  q1, q3                         \n"
+    "vrshrn.u16 d0, q0, #2                     \n"  // downshift, round and pack
+    "vrshrn.u16 d1, q1, #2                     \n"
+    "vst1.u8    {d0}, [%2]!                    \n"
+    "vst1.u8    {d1}, [%3]!                    \n"
+    "subs       %4, %4, #8                     \n"  // 8 processed per loop
+    "bhi        1b                             \n"
+  : "+r"(src_ptr),          // %0
+    "+r"(src_stride),       // %1
+    "+r"(dstU),             // %2
+    "+r"(dstV),             // %3
+    "+r"(dst_width)         // %4
+  :
+  : "q0", "q1", "q2", "q3"     // Clobber List
+  );
+}
 
 void ScaleRowDown4_NEON(const uint8* src_ptr, ptrdiff_t /* src_stride */,
                         uint8* dst_ptr, int dst_width) {
@@ -107,6 +160,86 @@ void ScaleRowDown4Box_NEON(const uint8* src_ptr, ptrdiff_t src_stride,
     "+r"(dst_width)         // %2
   : "r"(src_stride)         // %3
   : "r4", "r5", "q0", "q1", "q2", "q3", "memory", "cc"
+  );
+}
+  
+void ScaleRowDown4Int_NEON(const uint8* src_ptr, int src_stride,
+                           uint8* dst_ptr, int dst_width) {
+  asm volatile (
+    "add        r4, %0, %3                     \n"
+    "add        r5, r4, %3                     \n"
+    "add        %3, r5, %3                     \n"
+  "1:                                          \n"
+    "vld1.u8    {q0}, [%0]!                    \n"   // load up 16x4 block of input data
+    "vld1.u8    {q1}, [r4]!                    \n"
+    "vld1.u8    {q2}, [r5]!                    \n"
+    "vld1.u8    {q3}, [%3]!                    \n"
+    
+    "vpaddl.u8  q0, q0                         \n"
+    "vpadal.u8  q0, q1                         \n"
+    "vpadal.u8  q0, q2                         \n"
+    "vpadal.u8  q0, q3                         \n"
+    
+    "vpaddl.u16 q0, q0                         \n"
+    
+    "vrshrn.u32 d0, q0, #4                     \n"   // divide by 16 w/rounding
+    
+    "vmovn.u16  d0, q0                         \n"
+    "vst1.u32   {d0[0]}, [%1]!                 \n"
+    
+    "subs       %2, #4                         \n"
+    "bgt        1b                             \n"
+    
+  : "+r"(src_ptr),          // %0
+    "+r"(dst_ptr),          // %1
+    "+r"(dst_width)         // %2
+  : "r"(src_stride)         // %3
+  : "r4", "r5", "q0", "q1", "q2", "q3", "memory", "cc"
+  );
+}
+
+void ScaleRowDown4IntAndDeinterleave_NEON(const uint8* src_ptr, int src_stride,
+                                          uint8* dstU_ptr, uint8* dstV_ptr, int dst_width)
+{
+  asm volatile (
+    "add        r4, %0, %4, lsl #1             \n"
+    "add        r5, r4, %4, lsl #1             \n"
+    "add        %4, r5, %4, lsl #1             \n"
+  "1:                                          \n"
+    "vld2.u8    {q0,q1}, [%0]!                 \n"  // load up two 16x4 blocks of input
+    "vld2.u8    {q2,q3}, [r4]!                 \n"
+    "vld2.u8    {q4,q5}, [r5]!                 \n"
+    "vld2.u8    {q6,q7}, [%4]!                 \n"
+    
+    "vpaddl.u8  q0, q0                         \n"
+    "vpadal.u8  q0, q2                         \n"
+    "vpadal.u8  q0, q4                         \n"
+    "vpadal.u8  q0, q6                         \n"
+    "vpaddl.u8  q1, q1                         \n"
+    "vpadal.u8  q1, q3                         \n"
+    "vpadal.u8  q1, q5                         \n"
+    "vpadal.u8  q1, q7                         \n"
+    
+    "vpaddl.u16 q0, q0                         \n"
+    "vpaddl.u16 q1, q1                         \n"
+    
+    "vrshrn.u32 d0, q0, #4                     \n"  // divide by 16 w/rounding
+    "vrshrn.u32 d2, q1, #4                     \n"
+    
+    "vmovn.u16  d0, q0                         \n"
+    "vmovn.u16  d2, q1                         \n"
+    "vst1.u32   {d0[0]}, [%1]!                 \n"
+    "vst1.u32   {d2[0]}, [%2]!                 \n"
+    
+    "subs       %3, #4                         \n"
+    "bgt        1b                             \n"
+    
+  : "+r"(src_ptr),          // %0
+    "+r"(dstU_ptr),         // %1
+    "+r"(dstV_ptr),         // %2
+    "+r"(dst_width)         // %3
+  : "r"(src_stride)         // %4
+  : "r4", "r5", "q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "memory", "cc"
   );
 }
 

@@ -254,6 +254,7 @@ extern "C" {
 #define HAS_YUY2TOUV422ROW_NEON
 #define HAS_YUY2TOUVROW_NEON
 #define HAS_YUY2TOYROW_NEON
+#define HAS_IPHONE_NEON
 
 // Effects
 #define HAS_ARGBADDROW_NEON
@@ -303,7 +304,7 @@ typedef __declspec(align(32)) uint16 ulvec16[16];
 typedef __declspec(align(32)) uint32 ulvec32[8];
 typedef __declspec(align(32)) uint8 ulvec8[32];
 
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && !defined(__APPLE__)
 #define SIMD_ALIGNED(var) var __attribute__((aligned(16)))
 typedef int16 __attribute__((vector_size(16))) vec16;
 typedef int32 __attribute__((vector_size(16))) vec32;
@@ -326,7 +327,22 @@ typedef uint8 uvec8[16];
 #else
 #define OMITFP __attribute__((optimize("omit-frame-pointer")))
 #endif
-
+  
+void I420ToARGBRow_NEON(const uint8* y_buf,
+                        const uint8* u_buf,
+                        const uint8* v_buf,
+                        uint8* rgb_buf,
+                        int width);
+void I420ToBGRARow_NEON(const uint8* y_buf,
+                        const uint8* u_buf,
+                        const uint8* v_buf,
+                        uint8* rgb_buf,
+                        int width);
+void I420ToABGRRow_NEON(const uint8* y_buf,
+                        const uint8* u_buf,
+                        const uint8* v_buf,
+                        uint8* rgb_buf,
+                        int width);
 void I444ToARGBRow_NEON(const uint8* src_y,
                         const uint8* src_u,
                         const uint8* src_v,
@@ -1516,6 +1532,14 @@ void SobelXYRow_SSE2(const uint8* src_sobelx, const uint8* src_sobely,
                      uint8* dst_argb, int width);
 void SobelXYRow_NEON(const uint8* src_sobelx, const uint8* src_sobely,
                      uint8* dst_argb, int width);
+  
+void ABGRToI420Row2_NEON(const uint8* rgb_buf,
+                         uint8* y_buf,
+                         uint8* u_buf,
+                         uint8* v_buf,
+                         int width,
+                         int stride);
+
 
 #ifdef __cplusplus
 }  // extern "C"

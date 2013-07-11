@@ -54,15 +54,22 @@ void SetUseReferenceImpl(bool use) {
 // Note - not static due to reuse in convert for 444 to 420.
 void ScaleRowDown2_NEON(const uint8* src_ptr, ptrdiff_t /* src_stride */,
                         uint8* dst, int dst_width);
-
 void ScaleRowDown2Box_NEON(const uint8* src_ptr, ptrdiff_t src_stride,
                            uint8* dst, int dst_width);
+void ScaleRowDown2Int_NEON(const uint8* src_ptr, int src_stride,
+                           uint8* dst, int dst_width);
+void ScaleRowDown2IntAndDeinterleave_NEON(const uint8* src_ptr, int src_stride,
+                                          uint8* dstU, uint8* dstV, int dst_width);
 
 #define HAS_SCALEROWDOWN4_NEON
 void ScaleRowDown4_NEON(const uint8* src_ptr, ptrdiff_t /* src_stride */,
                         uint8* dst_ptr, int dst_width);
 void ScaleRowDown4Box_NEON(const uint8* src_ptr, ptrdiff_t src_stride,
                            uint8* dst_ptr, int dst_width);
+void ScaleRowDown4Int_NEON(const uint8* src_ptr, int src_stride,
+                           uint8* dst, int dst_width);
+void ScaleRowDown4IntAndDeinterleave_NEON(const uint8* src_ptr, int src_stride,
+                                          uint8* dstU, uint8* dstV, int dst_width);
 
 #define HAS_SCALEROWDOWN34_NEON
 // Down scale from 4 to 3 pixels. Use the neon multilane read/write

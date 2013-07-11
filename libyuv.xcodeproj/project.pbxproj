@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -259,7 +259,11 @@
 			};
 			buildConfigurationList = 54432C639D0E4F1C2AA31DD2 /* Build configuration list for PBXProject "libyuv" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 50C68F2D70ACA003EB3AF803;
 			projectDirPath = "";
 			projectRoot = "";
@@ -322,7 +326,7 @@
 				SHARED_INTERMEDIATE_DIR = "$(SYMROOT)/DerivedSources/$(CONFIGURATION)";
 				SYMROOT = ../../xcodebuild;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv7 i386";
+				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Release;
 		};
@@ -335,7 +339,7 @@
 				SHARED_INTERMEDIATE_DIR = "$(SYMROOT)/DerivedSources/$(CONFIGURATION)";
 				SYMROOT = ../../xcodebuild;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv7 i386";
+				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Debug;
 		};
@@ -361,12 +365,12 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"\"DISABLE_NACL\"",
 					"\"CHROMIUM_BUILD\"",
-					"\"USE_LIBJPEG_TURBO=1\"",
 					"\"ENABLE_INPUT_SPEECH\"",
 					"\"ENABLE_EGLIMAGE=1\"",
 					"\"DISABLE_FTP_SUPPORT=1\"",
 					"\"DYNAMIC_ANNOTATIONS_ENABLED=1\"",
 					"\"WTF_USE_DYNAMIC_ANNOTATIONS=1\"",
+					"\"HAVE_JPEG\"",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_THREADSAFE_STATICS = NO;
@@ -376,6 +380,7 @@
 				HEADER_SEARCH_PATHS = (
 					include,
 					.,
+					../libjpeg,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "";
@@ -393,10 +398,7 @@
 					"-Wno-c++11-narrowing",
 					"-Wno-reserved-user-defined-literal",
 				);
-				WARNING_CFLAGS_excluded = (
-					"-Wall",
-					"-Wextra",
-				);
+				WARNING_CFLAGS_excluded = "-Wall -Wextra";
 			};
 			name = Debug;
 		};
@@ -422,7 +424,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"\"DISABLE_NACL\"",
 					"\"CHROMIUM_BUILD\"",
-					"\"USE_LIBJPEG_TURBO=1\"",
 					"\"ENABLE_INPUT_SPEECH\"",
 					"\"ENABLE_EGLIMAGE=1\"",
 					"\"DISABLE_FTP_SUPPORT=1\"",
@@ -430,6 +431,7 @@
 					"\"NVALGRIND\"",
 					"\"DYNAMIC_ANNOTATIONS_ENABLED=0\"",
 					"\"NS_BLOCK_ASSERTIONS=1\"",
+					"\"HAVE_JPEG\"",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_THREADSAFE_STATICS = NO;
@@ -439,6 +441,7 @@
 				HEADER_SEARCH_PATHS = (
 					include,
 					.,
+					../libjpeg,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "";
@@ -456,10 +459,7 @@
 					"-Wno-c++11-narrowing",
 					"-Wno-reserved-user-defined-literal",
 				);
-				WARNING_CFLAGS_excluded = (
-					"-Wall",
-					"-Wextra",
-				);
+				WARNING_CFLAGS_excluded = "-Wall -Wextra";
 			};
 			name = Release;
 		};

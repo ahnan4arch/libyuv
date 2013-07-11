@@ -139,6 +139,14 @@ int I422ToI420(const uint8* src_y, int src_stride_y,
 #define HAS_SCALEROWDOWN2_NEON
 void ScaleRowDown2Box_NEON(const uint8* src_ptr, ptrdiff_t src_stride,
                            uint8* dst, int dst_width);
+void ScaleRowDown2Int_NEON(const uint8* src_ptr, int src_stride,
+                           uint8* dst, int dst_width);
+void ScaleRowDown2IntAndDeinterleave_NEON(const uint8* src_ptr, int src_stride,
+                                          uint8* dstU, uint8* dstV, int dst_width);
+void ScaleRowDown4Int_NEON(const uint8* src_ptr, int src_stride,
+                           uint8* dst, int dst_width);
+void ScaleRowDown4IntAndDeinterleave_NEON(const uint8* src_ptr, int src_stride,
+                                          uint8* dstU, uint8* dstV, int dst_width);
 #elif !defined(LIBYUV_DISABLE_X86) && \
     (defined(_M_IX86) || defined(__x86_64__) || defined(__i386__))
 
