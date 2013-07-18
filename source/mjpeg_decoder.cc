@@ -392,7 +392,7 @@ void MJpegDecoder::init_source(j_decompress_ptr cinfo) {
   fill_input_buffer(cinfo);
 }
 
-boolean MJpegDecoder::fill_input_buffer(j_decompress_ptr cinfo) {
+int MJpegDecoder::fill_input_buffer(j_decompress_ptr cinfo) {
   BufferVector* buf_vec = static_cast<BufferVector*>(cinfo->client_data);
   if (buf_vec->pos >= buf_vec->len) {
     assert(0 && "No more data");
