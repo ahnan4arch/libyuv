@@ -35,6 +35,7 @@
         'unit_test/compare_test.cc',
         'unit_test/convert_test.cc',
         'unit_test/cpu_test.cc',
+        'unit_test/math_test.cc',
         'unit_test/planar_test.cc',
         'unit_test/rotate_argb_test.cc',
         'unit_test/rotate_test.cc',
@@ -48,6 +49,11 @@
         ['OS=="linux"', {
           'cflags': [
             '-fexceptions',
+          ],
+        }],
+        [ 'OS == "ios" and target_subarch == 64', {
+          'defines': [
+            'LIBYUV_DISABLE_NEON'
           ],
         }],
         [ 'OS != "ios"', {
@@ -104,6 +110,13 @@
         'util/psnr.cc',
         'util/ssim.cc',
       ],
+      'conditions': [
+        [ 'OS == "ios" and target_subarch == 64', {
+          'defines': [
+            'LIBYUV_DISABLE_NEON'
+          ],
+        }],
+      ], # conditions
     },
     {
       'target_name': 'cpuid',
