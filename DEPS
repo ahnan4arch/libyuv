@@ -14,7 +14,7 @@ vars = {
   "chromium_trunk" : "http://src.chromium.org/svn/trunk",
   # chrome://version/ for revision of canary Chrome.
   # http://chromium-status.appspot.com/lkgr is a last known good revision.
-  "chromium_revision": "260824",
+  "chromium_revision": "255773",
 }
 
 # NOTE: Prefer revision numbers to tags for svn deps. Use http rather than
@@ -125,7 +125,7 @@ hooks = [
   # Pull GN binaries. This needs to be before running GYP below.
   {
     "name": "gn_win",
-    "pattern": ".",
+    "pattern": "tools/gn/bin/win/gn.exe.sha1",
     "action": [ "download_from_google_storage",
                 "--no_resume",
                 "--platform=win32",
@@ -136,7 +136,7 @@ hooks = [
   },
   {
     "name": "gn_mac",
-    "pattern": ".",
+    "pattern": "tools/gn/bin/mac/gn.sha1",
     "action": [ "download_from_google_storage",
                 "--no_resume",
                 "--platform=darwin",
@@ -147,7 +147,7 @@ hooks = [
   },
   {
     "name": "gn_linux",
-    "pattern": ".",
+    "pattern": "tools/gn/bin/linux/gn.sha1",
     "action": [ "download_from_google_storage",
                 "--no_resume",
                 "--platform=linux*",
@@ -158,7 +158,7 @@ hooks = [
   },
   {
     "name": "gn_linux32",
-    "pattern": ".",
+    "pattern": "tools/gn/bin/linux/gn32.sha1",
     "action": [ "download_from_google_storage",
                 "--no_resume",
                 "--platform=linux*",
@@ -172,7 +172,7 @@ hooks = [
     # zero seconds to run. If something changed, it downloads a prebuilt clang.
     "pattern": ".",
     "action": ["python", Var("root_dir") + "/tools/clang/scripts/update.py",
-               "--if-needed"],
+               "--mac-only"],
   },
   {
     # A change to a .gyp, .gypi, or to GYP itself should run the generator.
